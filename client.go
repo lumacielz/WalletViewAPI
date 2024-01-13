@@ -13,10 +13,11 @@ import (
 var client = http.Client{Timeout: 10 * time.Second}
 
 const (
-	token           = "56e84c6bf80710059261f480d36e057e1cd735c191bcffc890a5177141867bd5"
-	baseURL         = "https://rpc.ankr.com/multichain/%s/?ankr_%s="
-	getWalletMethod = "getAccountBalance"
-	getTokenMethod  = "getTokenPrice"
+	token               = "56e84c6bf80710059261f480d36e057e1cd735c191bcffc890a5177141867bd5"
+	baseURL             = "https://rpc.ankr.com/multichain/%s/?ankr_%s="
+	getWalletMethod     = "getAccountBalance"
+	getTokenMethod      = "getTokenPrice"
+	getCurrenciesMethod = "getCurrencies"
 )
 
 type GetWalletResponse struct {
@@ -25,6 +26,19 @@ type GetWalletResponse struct {
 
 type GetTokenPriceResponse struct {
 	Result TokenResult `json:"result"`
+}
+
+type GetCurrenciesResponse struct {
+	Result CurrenciesResult `json:"result"`
+}
+
+type CurrenciesResult struct {
+	Currencies []Currency `json:"currencies"`
+}
+
+type Currency struct {
+	Symbol  string `json:"symbol"`
+	Address string `json:"address"`
 }
 
 type TokenResult struct {
@@ -77,6 +91,26 @@ func getTokenData(contractAddress string) (*GetTokenPriceResponse, error) {
 	resp := GetTokenPriceResponse{}
 
 	err := post(getTokenMethod, body, &resp)
+	if err != nil {
+		return nil, err
+	}
+
+	return &resp, nil
+}
+
+func getCurrenciesData() (*GetCurrenciesResponse, error) {
+	body := []byte(`{
+	  "jsonrpc": "2.0",
+	  "id": 1,
+	  "method": "ankr_getCurrencies",
+	  "params": {
+		"blockchain": "arbitrum"
+	  }
+	}`)
+
+	resp := GetCurrenciesResponse{}
+
+	err := post(getCurrenciesMethod, body, &resp)
 	if err != nil {
 		return nil, err
 	}
