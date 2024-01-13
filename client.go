@@ -43,15 +43,15 @@ type Asset struct {
 }
 
 func getWallet(address string) (*GetWalletResponse, error) {
-	body := []byte(`{
+	body := []byte(fmt.Sprintf(`{
 	  "jsonrpc": "2.0",
 	  "id": 1,
 	  "method": "ankr_getAccountBalance",
 	  "params": {
 		"blockchain": "eth",
-		"walletAddress": "0x43a000734d61083c05e59355f7e40e2bd434577c"
+		"walletAddress": "%s"
 	  }
-	}`)
+	}`, address))
 
 	resp := GetWalletResponse{}
 
@@ -64,15 +64,16 @@ func getWallet(address string) (*GetWalletResponse, error) {
 }
 
 func getTokenData(contractAddress string) (*GetTokenPriceResponse, error) {
-	body := []byte(`{
+	body := []byte(fmt.Sprintf(`{
 	  "jsonrpc": "2.0",
       "id":1,
 	  "method": "ankr_getTokenPrice",
 	  "params": {
 		"blockchain": "eth",
-		"contractAddress": "0xdac17f958d2ee523a2206206994597c13d831ec7"
+		"contractAddress": "%s"
 	  }
-	}`)
+	}`, contractAddress))
+
 	resp := GetTokenPriceResponse{}
 
 	err := post(getTokenMethod, body, &resp)
