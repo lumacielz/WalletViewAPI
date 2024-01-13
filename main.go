@@ -7,6 +7,8 @@ import (
 )
 
 func main() {
+	cacheCurrencies()
+
 	router := gin.Default()
 
 	router.GET("/walletBalance", walletBalanceHandler)
@@ -25,21 +27,22 @@ func walletBalanceHandler(gCtx *gin.Context) {
 		return
 	}
 
-	token, err := getTokenData(destinationCurrency)
+	destinationCurrencyAddress := getAddressBySymbol(destinationCurrency)
+	token, err := getTokenData(destinationCurrencyAddress)
 	if err != nil {
 		gCtx.Error(err)
 		gCtx.Status(500)
 		return
 	}
 
-	resp := "%s: %.3f %s"
+	resp := map[string]string{}
 	for _, asset := range wallet.Result.Assets {
 		amount := calculateValue(asset.BalanceUsd, token.Result.USDPrice)
 
-		resp = fmt.Sprintf(resp, asset.TokenSymbol, amount, destinationCurrency)
+		resp[asset.TokenSymbol] = fmt.Sprintf("%.3f %s", amount, destinationCurrency)
 	}
 
-	gCtx.JSON(200, "OK")
+	gCtx.JSON(200, resp)
 }
 
 func calculateValue(balanceUsd, priceUsd string) float64 {

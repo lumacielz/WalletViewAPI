@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-var client = http.Client{Timeout: 10 * time.Second}
+var client = http.Client{Timeout: 3 * time.Second}
 
 const (
 	token               = "56e84c6bf80710059261f480d36e057e1cd735c191bcffc890a5177141867bd5"

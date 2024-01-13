@@ -1,6 +1,6 @@
 package main
 
-var currencies map[string]string
+var currencies = map[string]string{}
 
 func cacheCurrencies() {
 	data, _ := getCurrenciesData()
